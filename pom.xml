@@ -17,6 +17,7 @@
 
     <modules>
         <module>smart-starter</module>
+        <module>common-web-example</module>
     </modules>
     <dependencies>
         <!--配置文件处理器-->
