@@ -8,7 +8,18 @@ smart-security:
     secret: http-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-me
     # jwt 有效时间
     expiration-in-second: 1209600
-
 logging:
   level:
     com.smart: debug
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  messages:
+    encoding: UTF-8
+    basename: i18n/errors/ErrorMessages
+smart:
+  i18n:
+    default-encoding: UTF-8
+    base-names:
+      - validation/ValidationMessages

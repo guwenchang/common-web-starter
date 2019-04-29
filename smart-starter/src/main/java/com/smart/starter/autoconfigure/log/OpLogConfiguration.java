@@ -39,7 +39,7 @@ public class OpLogConfiguration{
 
 	@Bean
 	@ConditionalOnMissingBean
-	public OpLogAspect opLogAspect(ApplicationEventPublisher publisher) {
+	public OpLogAspect opLogAspect() {
 		return new OpLogAspect();
 	}
 

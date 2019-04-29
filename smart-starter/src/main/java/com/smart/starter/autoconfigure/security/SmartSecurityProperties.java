@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author guwenchang
  * @date 2019-04-22 15:48
  */
-@ConfigurationProperties(prefix = "smart-security")
+@ConfigurationProperties(prefix = "smart.security")
 @Getter
 @Setter
 public class SmartSecurityProperties {
