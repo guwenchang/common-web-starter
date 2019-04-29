@@ -1,0 +1,14 @@
+server:
+  port: 9009
+smart-security:
+  jwt:
+    # jwt sign算法
+    algorithm: hs512
+    # jwt secret
+    secret: http-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-me
+    # jwt 有效时间
+    expiration-in-second: 1209600
+
+logging:
+  level:
+    com.smart: debug
