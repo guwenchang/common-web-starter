@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableRedisLock
 @EnableXssFilter
 @EnableCorsFilter
+@EnableSwagger2Doc
 public class CommonWebExampleApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {

@@ -1,17 +1,8 @@
 server:
   port: 9009
-smart-security:
-  jwt:
-    # jwt sign算法
-    algorithm: hs512
-    # jwt secret
-    secret: http-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-me
-    # jwt 有效时间
-    expiration-in-second: 1209600
 logging:
   level:
     com.smart: debug
-    root: debug
 spring:
   redis:
     host: localhost
@@ -24,3 +15,30 @@ smart:
     default-encoding: UTF-8
     base-names:
       - validation/ValidationMessages
+  security:
+    ignore-urls:
+      - /swagger/**
+      - /v2/api-docs
+      - /swagger-resources
+      - /error
+    jwt:
+      # jwt sign算法
+      algorithm: hs512
+      # jwt secret
+      secret: http-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-mehttp-security-secret-modify-me
+      # jwt 有效时间
+      expiration-in-second: 1209600
+swagger:
+  apply-default-response-messages: false
+  base-package: com.smart.example.controller
+  base-path: /**
+  contact:
+    email: 123@qq.com
+    name: test
+  description: smart
+  enabled: true
+  exclude-path: /error, /ops/**
+  license: Apache License, Version 2.0
+  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: test api
+  version: 2.9.2.RELEASE

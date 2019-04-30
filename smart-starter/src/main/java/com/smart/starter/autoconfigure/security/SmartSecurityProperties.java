@@ -1,9 +1,13 @@
 package com.smart.starter.autoconfigure.security;
 
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -11,13 +15,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author guwenchang
  * @date 2019-04-22 15:48
  */
+@Data
 @ConfigurationProperties(prefix = "smart.security")
-@Getter
-@Setter
 public class SmartSecurityProperties {
+    /**
+     * 权限忽律的url
+     */
+    private List<String> ignoreUrls = new ArrayList<>();
+
+
     private Jwt jwt = new Jwt();
-    @Getter
-    @Setter
+
+    @Data
     public static class Jwt {
         /**
          * secret
