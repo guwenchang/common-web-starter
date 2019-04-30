@@ -1,7 +1,6 @@
 package com.smart.starter.core.redis.lock;
 
 
-import com.smart.starter.core.redis.RedisKeyGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
@@ -51,21 +50,14 @@ public class RedisLockHelper {
      *
      * @param lockKey lockKey
      * @param uuid    UUID
-     * @param timeout 超时时间
-     * @param unit    过期单位
+     * @param redisLock
      * @return true or false
      */
-    public boolean lock(String lockKey, final String uuid, long timeout, final TimeUnit unit) {
-        final long milliseconds = Expiration.from(timeout, unit).getExpirationTimeInMilliseconds();
+    public boolean lock(String lockKey, final String uuid, RedisLock redisLock) {
+        final long milliseconds = Expiration.from(redisLock.expire(), redisLock.timeUnit()).getExpirationTimeInMilliseconds();
         boolean success = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, (System.currentTimeMillis() + milliseconds) + DELIMITER + uuid);
         if (success) {
-            stringRedisTemplate.expire(lockKey, timeout, TimeUnit.SECONDS);
-        } else {
-            String oldVal = stringRedisTemplate.opsForValue().getAndSet(lockKey, (System.currentTimeMillis() + milliseconds) + DELIMITER + uuid);
-            final String[] oldValues = oldVal.split(Pattern.quote(DELIMITER));
-            if (Long.parseLong(oldValues[0]) + 1 <= System.currentTimeMillis()) {
-                return true;
-            }
+            stringRedisTemplate.expire(lockKey, redisLock.leaseTime(), redisLock.leaseTimeUnit());
         }
         return success;
     }

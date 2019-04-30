@@ -8,8 +8,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.data.redis.core.types.Expiration;
 
-import javax.annotation.Resource;
-
 /**
  *
  * @author guwenchang

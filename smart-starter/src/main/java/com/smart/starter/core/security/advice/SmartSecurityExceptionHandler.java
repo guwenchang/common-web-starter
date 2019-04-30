@@ -27,4 +27,19 @@ public class SmartSecurityExceptionHandler {
     public ResponseEntity<String> error(SmartSecurityException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
+
+    /**
+     * 通用异常
+     *
+     * @param e e
+     * @return 发生异常时的返回
+     */
+    @ExceptionHandler(value = {Exception.class})
+    @ResponseBody
+    public ResponseEntity<String> error(SecurityException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 }

@@ -32,31 +32,36 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             //默认都需要权限
-            Login needLogin = handlerMethod.getMethodAnnotation(Login.class);
-            if (needLogin == null || needLogin.action().equals(Action.NORMAL)) {
-                User user = SecurityContextHolder.getContext();
-                //登录校验
-                if (user.getUserId() == null) {
-                    log.warn("需要登陆:{},ParameterMap:{}",request.getRequestURI(),request.getParameterMap());
-                    throw new SmartSecurityException("需要登陆:" + request.getRequestURI() + ",ParameterMap:" + request.getParameterMap());
-                }
-                //权限校验
-                boolean checkResult;
-                Permission permission = handlerMethod.getMethodAnnotation(Permission.class);
-                if (permission != null) {
-                    String perm = permission.value();
-                    if (StringUtils.isEmpty(perm)){
-                        checkResult = true;
-                    }
-                    List<String> userPerms = user.getPerms();
-                    if (CollectionUtils.isEmpty(userPerms)) {
-                        checkResult = false;
-                    }else {
-                        checkResult = userPerms.contains(perm);
-                    }
-                    if (!checkResult) {
-                        log.warn("没有权限，userPermsFromToken = {}, perm = {}", userPerms, perm);
+            Login needLogin = handlerMethod.getBeanType().getAnnotation(Login.class);
+            if (needLogin != null && needLogin.action() == Action.SKIP){
+
+            }else {
+                needLogin = handlerMethod.getMethodAnnotation(Login.class);
+                if (needLogin == null || needLogin.action().equals(Action.NORMAL)) {
+                    User user = SecurityContextHolder.getContext();
+                    //登录校验
+                    if (user.getUserId() == null) {
+                        log.warn("需要登陆:{},ParameterMap:{}",request.getRequestURI(),request.getParameterMap());
                         throw new SmartSecurityException("需要登陆:" + request.getRequestURI() + ",ParameterMap:" + request.getParameterMap());
+                    }
+                    //权限校验
+                    boolean checkResult;
+                    Permission permission = handlerMethod.getMethodAnnotation(Permission.class);
+                    if (permission != null) {
+                        String perm = permission.value();
+                        if (StringUtils.isEmpty(perm)){
+                            checkResult = true;
+                        }
+                        List<String> userPerms = user.getPerms();
+                        if (CollectionUtils.isEmpty(userPerms)) {
+                            checkResult = false;
+                        }else {
+                            checkResult = userPerms.contains(perm);
+                        }
+                        if (!checkResult) {
+                            log.warn("没有权限，userPermsFromToken = {}, perm = {}", userPerms, perm);
+                            throw new SmartSecurityException("需要登陆:" + request.getRequestURI() + ",ParameterMap:" + request.getParameterMap());
+                        }
                     }
                 }
             }

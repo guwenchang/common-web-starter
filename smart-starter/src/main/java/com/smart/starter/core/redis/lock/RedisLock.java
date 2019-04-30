@@ -34,7 +34,21 @@ public @interface RedisLock {
      *
      * @return 秒
      */
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
+    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+
+
+    /**
+     *上锁以后xxx秒自动解锁
+     * @return
+     */
+    long leaseTime() default 10;
+
+
+    /**
+     * 释放时间单位
+     * @return
+     */
+    TimeUnit leaseTimeUnit() default TimeUnit.SECONDS;
 
     /**
      * <p>Key的分隔符（默认 :）</p>

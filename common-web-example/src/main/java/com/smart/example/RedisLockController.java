@@ -21,8 +21,9 @@ public class RedisLockController {
 
     @GetMapping
     @Login(action = Action.SKIP)
-    @RedisLock(prefix = "test", timeUnit = TimeUnit.DAYS, message = "被我拿到锁啦")
-    public String test1(@RedisParam(name = "a") String a, @RedisParam String b) {
+    @RedisLock(prefix = "test", expire = 10, message = "被我拿到锁啦")
+    public String test1(@RedisParam(name = "a") String a, @RedisParam String b) throws InterruptedException {
+        Thread.sleep(5000L);
         return a + b;
     }
 

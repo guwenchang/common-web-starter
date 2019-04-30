@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RedisLimitHelper {
 
-    private final RedisTemplate<String, Serializable> redisLimitTemplate;
+    private final RedisTemplate<String, Serializable> redisTemplate;
     /**
      * 尝试获取
      *
@@ -34,7 +34,7 @@ public class RedisLimitHelper {
         final List<String> keys = Collections.singletonList(key);
         String luaScript = buildLuaScript();
         RedisScript<Number> redisScript = new DefaultRedisScript<>(luaScript, Number.class);
-        Number count = redisLimitTemplate.execute(redisScript, keys, limitCount, limitExpire);
+        Number count = redisTemplate.execute(redisScript, keys, limitCount, limitExpire);
         if (log.isDebugEnabled()) {
             log.info("Access try count is {} for description={} and key = {}", count, description, key);
         }

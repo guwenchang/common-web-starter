@@ -20,6 +20,10 @@ public class SmartSecurityAutoConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthInterceptor());
+        registry.addInterceptor(new AuthInterceptor()).
+                excludePathPatterns("/swagger/**").
+                excludePathPatterns("/v2/api-docs").
+                excludePathPatterns("/swagger-resources").
+                excludePathPatterns("/error");
     }
 }

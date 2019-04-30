@@ -11,6 +11,7 @@ smart-security:
 logging:
   level:
     com.smart: debug
+    root: debug
 spring:
   redis:
     host: localhost
