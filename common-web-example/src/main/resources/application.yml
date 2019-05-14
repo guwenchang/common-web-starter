@@ -9,7 +9,7 @@ spring:
     port: 6379
   messages:
     encoding: UTF-8
-    basename: i18n/errors/ErrorMessages
+    basename: i18n/errors/ErrorMessages,validation/ValidationMessages
 smart:
   i18n:
     default-encoding: UTF-8

@@ -37,7 +37,7 @@ public class SmartSecurityExceptionHandler {
      */
     @ExceptionHandler(value = {Exception.class})
     @ResponseBody
-    public ResponseEntity<String> error(SecurityException e) {
+    public ResponseEntity<String> error(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

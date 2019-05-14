@@ -5,7 +5,7 @@ import com.smart.example.param.I18nParam;
 import com.smart.starter.core.i18n.LocaleMessage;
 import com.smart.starter.core.security.annotation.Action;
 import com.smart.starter.core.security.annotation.Login;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,21 +19,14 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/i18n")
+@RequiredArgsConstructor
 public class I18nController {
-
-
     private final LocaleMessage localeMessage;
-
-    @Autowired
-    public I18nController(LocaleMessage localeMessage) {
-        this.localeMessage = localeMessage;
-    }
-
 
     @GetMapping
     @Login(action = Action.SKIP)
     public String index() {
-        return localeMessage.getMessage("welcome.error");
+        return localeMessage.getMessage("vo.myerror.name");
     }
 
     @PostMapping

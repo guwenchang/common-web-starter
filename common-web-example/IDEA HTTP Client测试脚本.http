@@ -11,4 +11,6 @@ GET http://localhost:9009/admin
 Authorization:Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjEsInBlcm1zIjpbInVzZXIiXSwidXNlcm5hbWUiOiLlvKDkuIkiLCJpYXQiOjE1NTY1MjU3MDksImV4cCI6MTU1NzczNTMwOX0.l7FtIcCf6uFagoosaX72YpSYPXm5DeDH1cXGUn2JkWknLyc3fLtB_nMD-wHklmdNbIANiidxzhhYb8pbvLVdbQ
 
 ### 国际化
-GET http://localhost:9009/i18n
+GET http://localhost:9009/i18n?locale=zh_CN
+
+
