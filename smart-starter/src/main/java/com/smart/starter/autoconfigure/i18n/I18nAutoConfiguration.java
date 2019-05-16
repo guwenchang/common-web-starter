@@ -3,7 +3,7 @@ package com.smart.starter.autoconfigure.i18n;
 import cn.hutool.core.util.StrUtil;
 import com.smart.starter.constants.Constants;
 import com.smart.starter.core.i18n.I18nProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,14 +26,13 @@ import java.util.Locale;
  */
 @Configuration
 @EnableConfigurationProperties(value = {I18nProperties.class})
+@RequiredArgsConstructor
 public class I18nAutoConfiguration implements WebMvcConfigurer {
 
     private final I18nProperties properties;
 
-    @Autowired
-    public I18nAutoConfiguration(I18nProperties properties) {
-        this.properties = properties;
-    }
+    private static final int COOKIELOCALEAGE = 3600;
+
 
     private ResourceBundleMessageSource getMessageSource() {
         ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
@@ -57,7 +56,7 @@ public class I18nAutoConfiguration implements WebMvcConfigurer {
         localeResolver.setCookieName("localeCookie");
         //设置默认区域
         localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        localeResolver.setCookieMaxAge(3600);//设置cookie有效期.
+        localeResolver.setCookieMaxAge(COOKIELOCALEAGE);
         return localeResolver;
     }
 

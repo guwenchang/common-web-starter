@@ -6,6 +6,7 @@ import com.smart.starter.core.redis.limit.RedisLimitAspect;
 import com.smart.starter.core.redis.limit.RedisLimitHelper;
 import com.smart.starter.core.redis.lock.RedisLockAspect;
 import com.smart.starter.core.redis.lock.RedisLockHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,14 +32,11 @@ import java.io.Serializable;
 @Slf4j
 @Configuration
 @ConditionalOnClass(RedisAutoConfiguration.class)
+@RequiredArgsConstructor
 public class RedisLimitAutoConfiguration{
-
-
     private static final String REDIS_LIMIT_TEMPLATE = "redisLimitTemplate";
 
-
-    @Resource
-    private LettuceConnectionFactory lettuceConnectionFactory;
+    private final LettuceConnectionFactory lettuceConnectionFactory;
 
     @Bean(REDIS_LIMIT_TEMPLATE)
     public RedisTemplate<String, Serializable> redisLimitTemplate() {

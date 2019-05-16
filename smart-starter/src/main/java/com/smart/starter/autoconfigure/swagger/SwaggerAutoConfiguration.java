@@ -7,7 +7,6 @@ import com.smart.starter.core.swagger.SwaggerProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,9 +46,6 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware {
 
     private BeanFactory beanFactory;
 
-    @Autowired
-    private SwaggerProperties swaggerProperties;
-
     @Bean
     @ConditionalOnMissingBean
     public SwaggerProperties swaggerProperties() {
@@ -84,145 +80,155 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware {
 
         // 没有分组
         if (swaggerProperties.getDocket().size() == 0) {
-            ApiInfo apiInfo = new ApiInfoBuilder()
-                    .title(swaggerProperties.getTitle())
-                    .description(swaggerProperties.getDescription())
-                    .version(swaggerProperties.getVersion())
-                    .license(swaggerProperties.getLicense())
-                    .licenseUrl(swaggerProperties.getLicenseUrl())
-                    .contact(new Contact(swaggerProperties.getContact().getName(),
-                            swaggerProperties.getContact().getUrl(),
-                            swaggerProperties.getContact().getEmail()))
-                    .termsOfServiceUrl(swaggerProperties.getTermsOfServiceUrl())
-                    .build();
-
-            // base-path处理
-            // 当没有配置任何path的时候，解析/**
-            if (swaggerProperties.getBasePath().isEmpty()) {
-                swaggerProperties.getBasePath().add("/**");
-            }
-            List<Predicate<String>> basePath = new ArrayList();
-            for (String path : swaggerProperties.getBasePath()) {
-                basePath.add(PathSelectors.ant(path));
-            }
-
-            // exclude-path处理
-            List<Predicate<String>> excludePath = new ArrayList<>();
-            for (String path : swaggerProperties.getExcludePath()) {
-                excludePath.add(PathSelectors.ant(path));
-            }
-
-            Docket docketForBuilder = new Docket(DocumentationType.SWAGGER_2)
-                    .host(swaggerProperties.getHost())
-                    .apiInfo(apiInfo)
-                    .securityContexts(Collections.singletonList(securityContext()))
-                    .globalOperationParameters(buildGlobalOperationParametersFromSwaggerProperties(
-                            swaggerProperties.getGlobalOperationParameters()));
-
-            if ("BasicAuth".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
-                docketForBuilder.securitySchemes(Collections.singletonList(basicAuth()));
-            } else if (!"None".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
-                docketForBuilder.securitySchemes(Collections.singletonList(apiKey()));
-            }
-
-            // 全局响应消息
-            if (!swaggerProperties.getApplyDefaultResponseMessages()) {
-                buildGlobalResponseMessage(swaggerProperties, docketForBuilder);
-            }
-
-            Docket docket = docketForBuilder.select()
-                    .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
-                    .paths(
-                            Predicates.and(
-                                    Predicates.not(Predicates.or(excludePath)),
-                                    Predicates.or(basePath)
-                            )
-                    ).build();
-
-            /* ignoredParameterTypes **/
-            Class<?>[] array = new Class[swaggerProperties.getIgnoredParameterTypes().size()];
-            Class<?>[] ignoredParameterTypes = swaggerProperties.getIgnoredParameterTypes().toArray(array);
-            docket.ignoredParameterTypes(ignoredParameterTypes);
-
-            configurableBeanFactory.registerSingleton("defaultDocket", docket);
+            Docket docket = buildSingleDocket(swaggerProperties, configurableBeanFactory);
             docketList.add(docket);
             return docketList;
         }
 
         // 分组创建
         for (String groupName : swaggerProperties.getDocket().keySet()) {
-            SwaggerProperties.DocketInfo docketInfo = swaggerProperties.getDocket().get(groupName);
-
-            ApiInfo apiInfo = new ApiInfoBuilder()
-                    .title(docketInfo.getTitle().isEmpty() ? swaggerProperties.getTitle() : docketInfo.getTitle())
-                    .description(docketInfo.getDescription().isEmpty() ? swaggerProperties.getDescription() : docketInfo.getDescription())
-                    .version(docketInfo.getVersion().isEmpty() ? swaggerProperties.getVersion() : docketInfo.getVersion())
-                    .license(docketInfo.getLicense().isEmpty() ? swaggerProperties.getLicense() : docketInfo.getLicense())
-                    .licenseUrl(docketInfo.getLicenseUrl().isEmpty() ? swaggerProperties.getLicenseUrl() : docketInfo.getLicenseUrl())
-                    .contact(
-                            new Contact(
-                                    docketInfo.getContact().getName().isEmpty() ? swaggerProperties.getContact().getName() : docketInfo.getContact().getName(),
-                                    docketInfo.getContact().getUrl().isEmpty() ? swaggerProperties.getContact().getUrl() : docketInfo.getContact().getUrl(),
-                                    docketInfo.getContact().getEmail().isEmpty() ? swaggerProperties.getContact().getEmail() : docketInfo.getContact().getEmail()
-                            )
-                    )
-                    .termsOfServiceUrl(docketInfo.getTermsOfServiceUrl().isEmpty() ? swaggerProperties.getTermsOfServiceUrl() : docketInfo.getTermsOfServiceUrl())
-                    .build();
-
-            // base-path处理
-            // 当没有配置任何path的时候，解析/**
-            if (docketInfo.getBasePath().isEmpty()) {
-                docketInfo.getBasePath().add("/**");
-            }
-            List<Predicate<String>> basePath = new ArrayList();
-            for (String path : docketInfo.getBasePath()) {
-                basePath.add(PathSelectors.ant(path));
-            }
-
-            // exclude-path处理
-            List<Predicate<String>> excludePath = new ArrayList();
-            for (String path : docketInfo.getExcludePath()) {
-                excludePath.add(PathSelectors.ant(path));
-            }
-
-            Docket docketForBuilder = new Docket(DocumentationType.SWAGGER_2)
-                    .host(swaggerProperties.getHost())
-                    .apiInfo(apiInfo)
-                    .securityContexts(Collections.singletonList(securityContext()))
-                    .globalOperationParameters(assemblyGlobalOperationParameters(swaggerProperties.getGlobalOperationParameters(),
-                            docketInfo.getGlobalOperationParameters()));
-
-            if ("BasicAuth".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
-                docketForBuilder.securitySchemes(Collections.singletonList(basicAuth()));
-            } else if (!"None".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
-                docketForBuilder.securitySchemes(Collections.singletonList(apiKey()));
-            }
-
-            // 全局响应消息
-            if (!swaggerProperties.getApplyDefaultResponseMessages()) {
-                buildGlobalResponseMessage(swaggerProperties, docketForBuilder);
-            }
-
-            Docket docket = docketForBuilder.groupName(groupName)
-                    .select()
-                    .apis(RequestHandlerSelectors.basePackage(docketInfo.getBasePackage()))
-                    .paths(
-                            Predicates.and(
-                                    Predicates.not(Predicates.or(excludePath)),
-                                    Predicates.or(basePath)
-                            )
-                    )
-                    .build();
-
-            /* ignoredParameterTypes **/
-            Class<?>[] array = new Class[docketInfo.getIgnoredParameterTypes().size()];
-            Class<?>[] ignoredParameterTypes = docketInfo.getIgnoredParameterTypes().toArray(array);
-            docket.ignoredParameterTypes(ignoredParameterTypes);
-
-            configurableBeanFactory.registerSingleton(groupName, docket);
+            Docket docket = buildGroupDocket(swaggerProperties, configurableBeanFactory, groupName);
             docketList.add(docket);
         }
         return docketList;
+    }
+
+    private Docket buildGroupDocket(SwaggerProperties swaggerProperties, ConfigurableBeanFactory configurableBeanFactory, String groupName) {
+        SwaggerProperties.DocketInfo docketInfo = swaggerProperties.getDocket().get(groupName);
+
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title(docketInfo.getTitle().isEmpty() ? swaggerProperties.getTitle() : docketInfo.getTitle())
+                .description(docketInfo.getDescription().isEmpty() ? swaggerProperties.getDescription() : docketInfo.getDescription())
+                .version(docketInfo.getVersion().isEmpty() ? swaggerProperties.getVersion() : docketInfo.getVersion())
+                .license(docketInfo.getLicense().isEmpty() ? swaggerProperties.getLicense() : docketInfo.getLicense())
+                .licenseUrl(docketInfo.getLicenseUrl().isEmpty() ? swaggerProperties.getLicenseUrl() : docketInfo.getLicenseUrl())
+                .contact(
+                        new Contact(
+                                docketInfo.getContact().getName().isEmpty() ? swaggerProperties.getContact().getName() : docketInfo.getContact().getName(),
+                                docketInfo.getContact().getUrl().isEmpty() ? swaggerProperties.getContact().getUrl() : docketInfo.getContact().getUrl(),
+                                docketInfo.getContact().getEmail().isEmpty() ? swaggerProperties.getContact().getEmail() : docketInfo.getContact().getEmail()
+                        )
+                )
+                .termsOfServiceUrl(docketInfo.getTermsOfServiceUrl().isEmpty() ? swaggerProperties.getTermsOfServiceUrl() : docketInfo.getTermsOfServiceUrl())
+                .build();
+
+        // base-path处理
+        // 当没有配置任何path的时候，解析/**
+        if (docketInfo.getBasePath().isEmpty()) {
+            docketInfo.getBasePath().add("/**");
+        }
+        List<Predicate<String>> basePath = new ArrayList();
+        for (String path : docketInfo.getBasePath()) {
+            basePath.add(PathSelectors.ant(path));
+        }
+
+        // exclude-path处理
+        List<Predicate<String>> excludePath = new ArrayList();
+        for (String path : docketInfo.getExcludePath()) {
+            excludePath.add(PathSelectors.ant(path));
+        }
+
+        Docket docketForBuilder = new Docket(DocumentationType.SWAGGER_2)
+                .host(swaggerProperties.getHost())
+                .apiInfo(apiInfo)
+                .securityContexts(Collections.singletonList(securityContext()))
+                .globalOperationParameters(assemblyGlobalOperationParameters(swaggerProperties.getGlobalOperationParameters(),
+                        docketInfo.getGlobalOperationParameters()));
+
+        if ("BasicAuth".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
+            docketForBuilder.securitySchemes(Collections.singletonList(basicAuth()));
+        } else if (!"None".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
+            docketForBuilder.securitySchemes(Collections.singletonList(apiKey()));
+        }
+
+        // 全局响应消息
+        if (!swaggerProperties.getApplyDefaultResponseMessages()) {
+            buildGlobalResponseMessage(swaggerProperties, docketForBuilder);
+        }
+
+        Docket docket = docketForBuilder.groupName(groupName)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage(docketInfo.getBasePackage()))
+                .paths(
+                        Predicates.and(
+                                Predicates.not(Predicates.or(excludePath)),
+                                Predicates.or(basePath)
+                        )
+                )
+                .build();
+
+        /* ignoredParameterTypes **/
+        Class<?>[] array = new Class[docketInfo.getIgnoredParameterTypes().size()];
+        Class<?>[] ignoredParameterTypes = docketInfo.getIgnoredParameterTypes().toArray(array);
+        docket.ignoredParameterTypes(ignoredParameterTypes);
+
+        configurableBeanFactory.registerSingleton(groupName, docket);
+        return docket;
+    }
+
+    private Docket buildSingleDocket(SwaggerProperties swaggerProperties, ConfigurableBeanFactory configurableBeanFactory) {
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title(swaggerProperties.getTitle())
+                .description(swaggerProperties.getDescription())
+                .version(swaggerProperties.getVersion())
+                .license(swaggerProperties.getLicense())
+                .licenseUrl(swaggerProperties.getLicenseUrl())
+                .contact(new Contact(swaggerProperties.getContact().getName(),
+                        swaggerProperties.getContact().getUrl(),
+                        swaggerProperties.getContact().getEmail()))
+                .termsOfServiceUrl(swaggerProperties.getTermsOfServiceUrl())
+                .build();
+
+        // base-path处理
+        // 当没有配置任何path的时候，解析/**
+        if (swaggerProperties.getBasePath().isEmpty()) {
+            swaggerProperties.getBasePath().add("/**");
+        }
+        List<Predicate<String>> basePath = new ArrayList();
+        for (String path : swaggerProperties.getBasePath()) {
+            basePath.add(PathSelectors.ant(path));
+        }
+
+        // exclude-path处理
+        List<Predicate<String>> excludePath = new ArrayList<>();
+        for (String path : swaggerProperties.getExcludePath()) {
+            excludePath.add(PathSelectors.ant(path));
+        }
+
+        Docket docketForBuilder = new Docket(DocumentationType.SWAGGER_2)
+                .host(swaggerProperties.getHost())
+                .apiInfo(apiInfo)
+                .securityContexts(Collections.singletonList(securityContext()))
+                .globalOperationParameters(buildGlobalOperationParametersFromSwaggerProperties(
+                        swaggerProperties.getGlobalOperationParameters()));
+
+        if ("BasicAuth".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
+            docketForBuilder.securitySchemes(Collections.singletonList(basicAuth()));
+        } else if (!"None".equalsIgnoreCase(swaggerProperties.getAuthorization().getType())) {
+            docketForBuilder.securitySchemes(Collections.singletonList(apiKey()));
+        }
+
+        // 全局响应消息
+        if (!swaggerProperties.getApplyDefaultResponseMessages()) {
+            buildGlobalResponseMessage(swaggerProperties, docketForBuilder);
+        }
+
+        Docket docket = docketForBuilder.select()
+                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
+                .paths(
+                        Predicates.and(
+                                Predicates.not(Predicates.or(excludePath)),
+                                Predicates.or(basePath)
+                        )
+                ).build();
+
+        /* ignoredParameterTypes **/
+        Class<?>[] array = new Class[swaggerProperties.getIgnoredParameterTypes().size()];
+        Class<?>[] ignoredParameterTypes = swaggerProperties.getIgnoredParameterTypes().toArray(array);
+        docket.ignoredParameterTypes(ignoredParameterTypes);
+
+        configurableBeanFactory.registerSingleton("defaultDocket", docket);
+        return docket;
     }
 
     /**

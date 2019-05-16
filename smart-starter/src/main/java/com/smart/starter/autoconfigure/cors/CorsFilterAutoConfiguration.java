@@ -2,6 +2,7 @@ package com.smart.starter.autoconfigure.cors;
 
 import cn.hutool.core.util.StrUtil;
 import com.smart.starter.core.cors.CorsFilterProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,16 +19,12 @@ import org.springframework.web.filter.CorsFilter;
  */
 @Configuration
 @EnableConfigurationProperties(value = {CorsFilterProperties.class})
+@RequiredArgsConstructor
 public class CorsFilterAutoConfiguration {
 
     private static final String PATH = "/**";
 
     private final CorsFilterProperties properties;
-
-    @Autowired
-    public CorsFilterAutoConfiguration(CorsFilterProperties properties) {
-        this.properties = properties;
-    }
 
 
     private CorsConfiguration buildConfig() {
