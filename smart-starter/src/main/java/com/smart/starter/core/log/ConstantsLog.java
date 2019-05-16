@@ -9,4 +9,7 @@ public interface ConstantsLog {
      * 操作日志
      */
     String OP = "op";
+
+    String OP_LOG_QUEUE = "op.log.queue";
+
 }

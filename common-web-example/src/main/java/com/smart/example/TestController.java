@@ -56,6 +56,7 @@ public class TestController {
      */
     @GetMapping("/login")
     @Login(action = Action.SKIP)
+    @OpLog("login")
     public String loginReturnToken() {
         User user = User.builder()
                 .userId(1)

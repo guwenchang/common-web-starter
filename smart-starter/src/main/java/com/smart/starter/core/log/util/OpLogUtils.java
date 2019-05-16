@@ -26,7 +26,7 @@ public class OpLogUtils {
         HttpServletRequest request = ((ServletRequestAttributes) Objects
                 .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         OpLogParam opLogParam = new OpLogParam();
-        opLogParam.setCreateBy(Objects.requireNonNull(getUsername()));
+        opLogParam.setCreateBy(getUsername());
         opLogParam.setRemoteAddr(ServletUtil.getClientIP(request));
         opLogParam.setRequestUri(URLUtil.getPath(request.getRequestURI()));
         opLogParam.setMethod(request.getMethod());

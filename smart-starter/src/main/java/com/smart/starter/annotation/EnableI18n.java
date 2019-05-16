@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- *
+ * 国际化配置
  * @author guwenchang
  * @date 2019-04-29 18:02
  */

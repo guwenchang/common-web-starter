@@ -6,10 +6,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Locale;
-
 /**
- *
+ * 国际化
  * @author guwenchang
  * @date 2019-04-29 17:53
  */
@@ -28,20 +26,12 @@ public class LocaleMessage {
         return getMessage(code, null);
     }
 
-    public String getMessage(String code,Locale locale,String defaultMessage) {
-        return messageSource.getMessage(code, null, defaultMessage, locale);
-    }
-
-
-
     public String getMessage(String code, Object[] args) {
         return getMessage(code, args, null);
     }
 
     public String getMessage(String code, Object[] args, String defaultMessage) {
         log.info("locale {}",LocaleContextHolder.getLocale().toString());
-
-        //这里使用比较方便的方法，不依赖request.
         return messageSource.getMessage(code, args, defaultMessage, LocaleContextHolder.getLocale());
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- *
+ * 跨域配置
  * @author guwenchang
  * @date 2019-04-29 17:49
  */

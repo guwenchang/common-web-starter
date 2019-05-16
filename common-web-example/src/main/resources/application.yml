@@ -9,12 +9,21 @@ spring:
     port: 6379
   messages:
     encoding: UTF-8
-    basename: i18n/errors/ErrorMessages,validation/ValidationMessages
+    basename: i18n/messages
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
 smart:
   i18n:
     default-encoding: UTF-8
     base-names:
-      - validation/ValidationMessages
+      - i18n/ValidationMessages
   security:
     ignore-urls:
       - /swagger/**

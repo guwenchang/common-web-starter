@@ -5,12 +5,9 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * <p>
- * 日志表
- * </p>
- *
- * @author lengleng
- * @since 2017-11-20
+ * 日志
+ * @author guwenchang
+ * @date 2019-05-16
  */
 @Data
 public class OpLogParam implements Serializable {

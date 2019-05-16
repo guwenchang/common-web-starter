@@ -20,7 +20,7 @@ import java.util.Locale;
 
 
 /**
- *
+ * 国际化配置
  * @author guwenchang
  * @date 2019-04-29 17:53
  */
@@ -31,9 +31,14 @@ public class I18nAutoConfiguration implements WebMvcConfigurer {
 
     private final I18nProperties properties;
 
-    private static final int COOKIELOCALEAGE = 3600;
+    private static final int COOKIE_LOCALE_AGE = 604800;
+    private static final String COOKIE_LOCALE_NAME = "locale";
 
 
+    /**
+     * 用于校验信息的国际化文件
+     * @return
+     */
     private ResourceBundleMessageSource getMessageSource() {
         ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
         bundleMessageSource.setDefaultEncoding(StrUtil.blankToDefault(properties.getDefaultEncoding(), Constants.DEFAULT_CHARSET));
@@ -45,21 +50,29 @@ public class I18nAutoConfiguration implements WebMvcConfigurer {
     @Override
     public Validator getValidator() {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        //自定义校验文件
         validator.setValidationMessageSource(getMessageSource());
         return validator;
     }
 
 
+    /**
+     * locale 解析器
+     * @return
+     */
     @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-        localeResolver.setCookieName("localeCookie");
-        //设置默认区域
+        localeResolver.setCookieName(COOKIE_LOCALE_NAME);
         localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        localeResolver.setCookieMaxAge(COOKIELOCALEAGE);
+        localeResolver.setCookieMaxAge(COOKIE_LOCALE_AGE);
         return localeResolver;
     }
 
+    /**
+     * locale 的全局拦截器，来处理locale
+     * @return
+     */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();

@@ -26,7 +26,7 @@ public class I18nController {
     @GetMapping
     @Login(action = Action.SKIP)
     public String index() {
-        return localeMessage.getMessage("vo.myerror.name");
+        return localeMessage.getMessage("welcome");
     }
 
     @PostMapping
