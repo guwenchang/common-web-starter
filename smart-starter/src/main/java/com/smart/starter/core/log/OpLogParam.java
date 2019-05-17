@@ -14,6 +14,11 @@ public class OpLogParam implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+
+	/**
+	 * 应用
+	 */
+	private String app;
 	/**
 	 * 日志类型
 	 */

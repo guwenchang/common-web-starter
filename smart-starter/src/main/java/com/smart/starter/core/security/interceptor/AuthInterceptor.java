@@ -8,6 +8,8 @@ import com.smart.starter.core.security.annotation.Permission;
 import com.smart.starter.core.security.context.SecurityContextHolder;
 import com.smart.starter.core.security.exception.SmartSecurityException;
 import com.smart.starter.core.security.jwt.User;
+import com.smart.starter.exeception.ApiException;
+import com.smart.starter.exeception.BaseError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -41,8 +43,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                     User user = SecurityContextHolder.getContext();
                     //登录校验
                     if (user.getUserId() == null) {
-                        log.warn("需要登陆:{},ParameterMap:{}",request.getRequestURI(),request.getParameterMap());
-                        throw new SmartSecurityException("需要登陆:" + request.getRequestURI() + ",ParameterMap:" + request.getParameterMap());
+                        log.warn("need login:{},ParameterMap:{}",request.getRequestURI(),request.getParameterMap());
+                        throw new ApiException(BaseError.UNAUTHORIZED);
                     }
                     //权限校验
                     boolean checkResult;
@@ -59,8 +61,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                             checkResult = userPerms.contains(perm);
                         }
                         if (!checkResult) {
-                            log.warn("没有权限，userPermsFromToken = {}, perm = {}", userPerms, perm);
-                            throw new SmartSecurityException("需要登陆:" + request.getRequestURI() + ",ParameterMap:" + request.getParameterMap());
+                            log.warn("no permission，userPermsFromToken = {}, perm = {}", userPerms, perm);
+                            throw new ApiException(BaseError.FORBIDDEN);
                         }
                     }
                 }

@@ -69,7 +69,12 @@ public class UserOperator {
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
-        //先从cookie中取
+        //在请求参数中找
+        String tokenValue = request.getParameter(ConstantsSecurity.TOKEN_PARAM_KEY);
+        if (!StringUtils.isEmpty(tokenValue)) {
+            return tokenValue;
+        }
+        //在cookie中取
         Cookie[] cookies = request.getCookies();
         if (cookies != null){
             for (Cookie cookie : cookies) {
@@ -84,10 +89,10 @@ public class UserOperator {
             return null;
         }
         if (!header.startsWith(ConstantsSecurity.BEARER)) {
-            throw new SmartSecurityException("token必须以'Bearer '开头");
+            throw new SmartSecurityException("token should start with 'Bearer ' ");
         }
         if (header.length() <= SEVEN) {
-            throw new SmartSecurityException("token非法，长度 <= 7");
+            throw new SmartSecurityException("Token Invalided，length <= 7");
         }
         return header.substring(SEVEN);
     }
@@ -96,7 +101,7 @@ public class UserOperator {
     private static HttpServletRequest getRequest() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if ((requestAttributes == null)) {
-            throw new SmartSecurityException("requestAttributes为null");
+            throw new SmartSecurityException("requestAttributes is null");
         }
         return ((ServletRequestAttributes) requestAttributes).getRequest();
     }

@@ -2,8 +2,6 @@ package com.smart.starter.core.redis.lock;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.connection.RedisStringCommands;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.util.StringUtils;
@@ -31,19 +29,6 @@ public class RedisLockHelper {
      */
     private static final ScheduledExecutorService EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(10);
 
-
-    /**
-     * 获取锁（存在死锁风险）
-     *
-     * @param lockKey lockKey
-     * @param value   value
-     * @param time    超时时间
-     * @param unit    过期单位
-     * @return true or false
-     */
-    public boolean tryLock(final String lockKey, final String value, final long time, final TimeUnit unit) {
-        return stringRedisTemplate.execute((RedisCallback<Boolean>) connection -> connection.set(lockKey.getBytes(), value.getBytes(), Expiration.from(time, unit), RedisStringCommands.SetOption.SET_IF_ABSENT));
-    }
 
     /**
      * 获取锁

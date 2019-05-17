@@ -35,9 +35,7 @@ public class RedisLimitHelper {
         String luaScript = buildLuaScript();
         RedisScript<Number> redisScript = new DefaultRedisScript<>(luaScript, Number.class);
         Number count = redisTemplate.execute(redisScript, keys, limitCount, limitExpire);
-        if (log.isDebugEnabled()) {
-            log.info("Access try count is {} for description={} and key = {}", count, description, key);
-        }
+        log.debug("Access try count is {} for description={} and key = {}", count, description, key);
         return count != null && count.longValue() <= limitCount;
     }
 
@@ -51,7 +49,7 @@ public class RedisLimitHelper {
         StringBuilder lua = new StringBuilder();
         lua.append("local c");
         lua.append("\nc = redis.call('get',KEYS[1])");
-        // 调用不超过最大值，则直接返回
+        // 调用超过最大值，则直接返回
         lua.append("\nif c and tonumber(c) > tonumber(ARGV[1]) then");
         lua.append("\nreturn c;");
         lua.append("\nend");

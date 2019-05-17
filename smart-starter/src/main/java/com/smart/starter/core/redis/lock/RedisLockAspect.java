@@ -33,11 +33,9 @@ public class RedisLockAspect {
         final String lockKey = redisKeyGenerator.generate(redisLock.prefix(), redisLock.delimiter(), pjp);
         String value = UUID.randomUUID().toString();
         try {
-            // 假设上锁成功，但是设置过期时间失效，以后拿到的都是 false
             final boolean success = redisLockHelper.lock(lockKey, value, redisLock);
-            if (log.isDebugEnabled()) {
-                log.debug("Redis lock key is [{}] and status is [{}]", lockKey, success);
-            }
+            log.debug("Redis lock key is [{}] and status is [{}]", lockKey, success);
+
             if (!success) {
                 throw new RuntimeException(redisLock.message());
             }

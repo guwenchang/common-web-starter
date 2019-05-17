@@ -23,13 +23,6 @@ public @interface RedisLimit {
 
 
     /**
-     * 超时时间单位
-     *
-     * @return 秒
-     */
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
-
-    /**
      * <p>Key的分隔符（默认 :）</p>
      * <p>生成的Key：N:SO1008:500</p>
      *
@@ -42,7 +35,14 @@ public @interface RedisLimit {
      *
      * @return int
      */
-    int expire() default 5;
+    int expire() default 2;
+
+    /**
+     * 过期时间单位
+     *
+     * @return 秒
+     */
+    TimeUnit timeUnit() default TimeUnit.SECONDS;
 
     /**
      * 最多的访问限制次数
@@ -64,7 +64,7 @@ public @interface RedisLimit {
      *
      * @return String
      */
-    String description() default "";
+    String description() default "access limit";
 
 
 }

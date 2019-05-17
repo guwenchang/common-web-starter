@@ -39,6 +39,11 @@ public class SmartSecurityConfiguration {
         return new SmartSecurityExceptionHandler();
     }
 
+    /**
+     * 身份认证过滤器
+     * @param userOperator
+     * @return
+     */
     @Bean
     public FilterRegistrationBean securityFilterRegistration1(UserOperator userOperator) {
         //新建过滤器注册类
@@ -46,7 +51,7 @@ public class SmartSecurityConfiguration {
         // 添加我们写好的过滤器
         registration.setFilter( new SmartSecurityContextHolderFilter(userOperator));
         // 设置过滤器的URL模式
-        registration.addUrlPatterns("/*");
+        registration.addUrlPatterns("/**");
         return registration;
     }
 }

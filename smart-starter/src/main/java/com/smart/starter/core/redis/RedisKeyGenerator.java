@@ -9,7 +9,5 @@ import org.aspectj.lang.ProceedingJoinPoint;
  */
 public interface RedisKeyGenerator {
 
-
-
     String generate(String prefix, String delimiter, ProceedingJoinPoint pjp);
 }

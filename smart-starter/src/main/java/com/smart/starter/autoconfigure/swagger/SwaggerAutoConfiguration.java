@@ -38,9 +38,8 @@ import static com.google.common.collect.Lists.newArrayList;
  * @date 2019-04-30
  */
 @Configuration
-@Import({
-        Swagger2Configuration.class
-})
+@Import({Swagger2Configuration.class})
+@ConditionalOnProperty(name = "swagger.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(value = {SwaggerProperties.class})
 public class SwaggerAutoConfiguration implements BeanFactoryAware {
 
@@ -73,12 +72,11 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(UiConfiguration.class)
-    @ConditionalOnProperty(name = "swagger.enabled", matchIfMissing = true)
     public List<Docket> createRestApi(SwaggerProperties swaggerProperties) {
         ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
         List<Docket> docketList = new LinkedList<>();
 
-        // 没有分组
+        // 为了适应doc center 单个文档节点内不再进行分组
         if (swaggerProperties.getDocket().size() == 0) {
             Docket docket = buildSingleDocket(swaggerProperties, configurableBeanFactory);
             docketList.add(docket);

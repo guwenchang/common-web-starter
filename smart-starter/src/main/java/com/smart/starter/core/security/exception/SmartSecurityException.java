@@ -7,17 +7,12 @@ package com.smart.starter.core.security.exception;
  */
 public class SmartSecurityException extends RuntimeException {
 
-    private int code;
 
     public SmartSecurityException(Throwable cause) {
         super(cause);
     }
 
     public SmartSecurityException(String message) {
-        super(message);
-    }
-
-    public SmartSecurityException(int code,String message) {
         super(message);
     }
 

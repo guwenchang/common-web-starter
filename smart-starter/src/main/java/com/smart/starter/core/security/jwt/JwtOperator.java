@@ -36,8 +36,8 @@ public class JwtOperator {
                     .getBody();
 
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.error("token解析错误", e);
-            throw new SmartSecurityException("Token invalided.", e);
+            log.error("Token Invalided", e);
+            throw new SmartSecurityException("Token Invalided ", e);
         }
     }
 

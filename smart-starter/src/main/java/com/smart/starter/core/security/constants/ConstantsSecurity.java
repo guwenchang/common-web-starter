@@ -14,6 +14,10 @@ public interface ConstantsSecurity {
      * token 在cookie中的值
      */
     String TOKEN_COOKIE_KEY = "auth_token";
+    /**
+     * token 在param中的值
+     */
+    String TOKEN_PARAM_KEY = "auth_token";
 
     /**
      * Bearer header

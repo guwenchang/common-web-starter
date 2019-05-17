@@ -30,7 +30,7 @@ public @interface RedisLock {
     int expire() default 5;
 
     /**
-     * 超时时间单位
+     * 过期时间单位
      *
      * @return 秒
      */
@@ -41,7 +41,7 @@ public @interface RedisLock {
      *上锁以后xxx秒自动解锁
      * @return
      */
-    long leaseTime() default 10;
+    long leaseTime() default 30;
 
 
     /**
@@ -64,5 +64,5 @@ public @interface RedisLock {
      *
      * @return String
      */
-    String message() default "";
+    String message() default "Concurrent operation error";
 }

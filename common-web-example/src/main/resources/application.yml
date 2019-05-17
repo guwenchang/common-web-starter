@@ -19,6 +19,8 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual
+  application:
+    name: test
 smart:
   i18n:
     default-encoding: UTF-8

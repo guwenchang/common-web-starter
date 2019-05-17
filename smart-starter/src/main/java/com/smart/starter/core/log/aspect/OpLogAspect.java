@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
@@ -29,6 +30,12 @@ public class OpLogAspect {
 
 	@Resource
 	private ApplicationEventPublisher publisher;
+
+	/**
+	 * 用于获取应用名称
+	 */
+	@Resource
+	private Environment environment;
 
 	@Pointcut("execution(public * com.smart..*Controller.*(..))")
 	public void webLog() {
@@ -51,6 +58,7 @@ public class OpLogAspect {
 		OpLog opLog = targetMethod.getAnnotation(OpLog.class);
 		if (opLog != null){
 			OpLogParam opLogParam = OpLogUtils.getopLog();
+			opLogParam.setApp(environment.getProperty("spring.application.name"));
 			opLogParam.setTitle(opLog.value());
 			opLogParam.setType(opLog.type());
 			opLogParam.setTime(endTime - startTime);
