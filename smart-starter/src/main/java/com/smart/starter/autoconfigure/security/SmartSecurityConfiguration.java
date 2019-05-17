@@ -51,7 +51,7 @@ public class SmartSecurityConfiguration {
         // 添加我们写好的过滤器
         registration.setFilter( new SmartSecurityContextHolderFilter(userOperator));
         // 设置过滤器的URL模式
-        registration.addUrlPatterns("/**");
+        registration.addUrlPatterns("/*");
         return registration;
     }
 }
